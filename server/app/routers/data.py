@@ -50,11 +50,11 @@ def get_resume_names(data_folder: str, debug_mode: bool = False):
     resume_names = []
     for item in data_folder.glob("**/*"):
         if item.is_file():
-            # Constructing relative path from root folder
-            rel_path = item.relative_to(root_folder)
-            resume_names.append(str(rel_path))
+            resume_names.append(str(item))
+
     if debug_mode:
         print(resume_names)
+
     return resume_names
 
 
