@@ -21,6 +21,8 @@ const App = () => {
     await updateFiles();
   };
 
+  const [messages, setMessages] = useState([]);
+
   const updateFiles = async () => {
     const { data } = await axios.get("/api/upload");
     setFilenames(data.files);
@@ -31,8 +33,27 @@ const App = () => {
     updateFiles().catch(console.error);
   }, []);
 
+  const sendChat = async (message) => {
+    setMessages((messages) => [...messages, { user: message, bot: null }]);
+
+    const response = await axios.post(
+      "/api/chat",
+      {},
+      {
+        params: {
+          query_text: message,
+        },
+      }
+    );
+
+    setMessages((messages) => [
+      ...messages.slice(-1),
+      { ...messages[messages.length - 1], bot: response.data },
+    ]);
+  };
+
   return (
-    <>
+    <div className="w-full h-full flex flex-col">
       <header className="px-12 py-6 flex justify-end">
         <div className="flex items-center gap-4">
           <img
@@ -45,7 +66,7 @@ const App = () => {
           </div>
         </div>
       </header>
-      <main className="mx-auto my-0 max-w-xl py-8">
+      <main className="mx-auto my-0 max-w-2xl py-8 px-8 flex flex-col flex-1">
         <div>
           <h1 className="text-5xl mb-1">Welcome to ResumeAG</h1>
           <h2 className="text-5xl font-light text-gray-500">
@@ -67,35 +88,44 @@ const App = () => {
             Upload Resume&nbsp;&nbsp;→
           </button>
         </div>
-        <div className="mt-8">
-          <h3 className="font-medium text-slate-500">All Resumes</h3>
-          <motion.div
-            className="flex flex-wrap gap-4 mt-2"
-            variants={{
-              show: {
-                transition: {
-                  staggerChildren: 0.05,
+        <div className="mt-8 flex-1 overflow-auto">
+          <h3 className="font-medium text-slate-600 uppercase text-sm">
+            All Resumes
+          </h3>
+          {filenames ? (
+            <motion.div
+              className="flex flex-wrap gap-4 mt-2 mb-2"
+              variants={{
+                show: {
+                  transition: {
+                    staggerChildren: 0.05,
+                  },
                 },
-              },
-            }}
-            animate="show"
-          >
-            {filenames ? (
-              filenames.map((filename, i) => (
+              }}
+              animate="show"
+            >
+              {filenames.map((filename, i) => (
                 <ResumeBox filename={filename} key={i} />
-              ))
-            ) : (
-              <div className="loading" />
-            )}
-          </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <div className="loading" />
+          )}
+          {messages.map(({ user, bot }, i) => (
+            <div key={i}>
+              <h3 className="font-medium text-slate-600 uppercase text-sm mt-8">
+                Chat
+              </h3>
+              <p className="mt-1 text-slate-500">{user}</p>
+              <p className="mt-1 black">{bot || "Thinking..."}</p>
+            </div>
+          ))}
         </div>
-        <div className="fixed bottom-16 left-0 right-0">
-          <div className="mx-auto my-0 max-w-xl">
-            <ChatBox onSubmit={() => void 0} />
-          </div>
+        <div className="w-full mt-8">
+          <ChatBox onSubmit={sendChat} />
         </div>
       </main>
-    </>
+    </div>
   );
 };
 
