@@ -1,19 +1,16 @@
-import { useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import recruiterURL from "./assets/recruiter.jpg";
 import ChatBox from "./ChatBox";
 import ResumeBox from "./ResumeBox";
 import { motion } from "framer-motion";
 import axios from "axios";
 
-function App() {
+const App = () => {
   const resumeUploadRef = useRef();
 
   const uploadResume = async () => {
-    var formData = new FormData();
-
+    const formData = new FormData();
     formData.append("file", resumeUploadRef.current.files[0]);
-
-    console.log(resumeUploadRef.current.files[0]);
 
     await axios.post("/api/upload", formData, {
       headers: {
@@ -21,6 +18,14 @@ function App() {
       },
     });
   };
+
+  const [filenames, setFilenames] = useState(null);
+  useEffect(() => {
+    (async () => {
+      const { data: filenames } = await axios.get("/api/upload");
+      setFilenames(filenames);
+    })().catch(console.error);
+  }, []);
 
   return (
     <>
@@ -71,10 +76,13 @@ function App() {
             }}
             animate="show"
           >
-            <ResumeBox filename="Ariel Qian.pdf" />
-            <ResumeBox filename="Samarth Goel.pdf" />
-            <ResumeBox filename="Reagan Lee.pdf" />
-            <ResumeBox filename="Vihan Bhargava.pdf" />
+            {filenames ? (
+              filenames.map((filename, i) => (
+                <ResumeBox filename={filename} key={i} />
+              ))
+            ) : (
+              <div className="loading" />
+            )}
           </motion.div>
         </div>
         <div className="fixed bottom-16 left-0 right-0">
@@ -85,6 +93,6 @@ function App() {
       </main>
     </>
   );
-}
+};
 
 export default App;
