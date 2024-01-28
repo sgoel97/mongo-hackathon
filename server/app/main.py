@@ -20,3 +20,8 @@ app.include_router(data.router)
 app.include_router(chat.router)
 
 load_dotenv()
+
+
+@app.on_event("startup")
+def on_startup():
+    pass
