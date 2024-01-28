@@ -16,6 +16,7 @@ async def upload_file(file: UploadFile):
 
 @router.get("/")
 async def get_files():
-    path = Path("./app/db/files").mkdir(parents=True, exist_ok=True)
+    path = Path("./app/db/files")
+    path.mkdir(parents=True, exist_ok=True)
     file_names = list(path.glob("*.pdf"))
     return {"files": file_names}
