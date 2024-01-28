@@ -12,7 +12,7 @@ from llama_index.readers.file.base import SimpleDirectoryReader
 from llama_index import SimpleDirectoryReader, ServiceContext, VectorStoreIndex
 from llama_index.embeddings import TogetherEmbedding
 from llama_index.llms import TogetherLLM
-
+import json
 
 # Provide a template following the LLM's original chat template.
 
@@ -26,8 +26,8 @@ def completion_to_prompt(completion: str) -> str:
 
 @router.post("/")
 def run_rag_completion(
-    index,
-    document_dir: str,
+    # index,
+    # document_dir: str,
     query_text: str,
     embedding_model: str = "togethercomputer/m2-bert-80M-8k-retrieval",
     generative_model: str = "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -48,17 +48,27 @@ def run_rag_completion(
     # )
     # documents = SimpleDirectoryReader(document_dir).load_data()
     # index = VectorStoreIndex.from_documents(documents, service_context=service_context)
-    response = index.as_query_engine(similarity_top_k=5).query(query_text)
+    # response = index.as_query_engine(similarity_top_k=5).query(query_text)
+    response = "test"  # str(response)
 
-    return str(response)
+    with open("./app/db/message_history.json", "r") as f:
+        curr_messages = json.load(f)
+
+    curr_messages["messages"].append({"role": "user", "message": query_text})
+    curr_messages["messages"].append({"role": "assistant", "message": response})
+
+    with open("./app/db/message_history.json", "w") as f:
+        json.dump(curr_messages, f)
+
+    return response
 
 
-@router.post("/rag")
-def generate_rag_response(message: str):
-    vector_store = vector_store["vector_store"]
-    storage_context = StorageContext.from_defaults(vector_store=vector_store)
-    # index = VectorStoreIndex.from_documents(
-    #     documents, storage_context=storage_context
-    # )
+# @router.post("/rag")
+# def generate_rag_response(message: str):
+#     vector_store = vector_store["vector_store"]
+#     storage_context = StorageContext.from_defaults(vector_store=vector_store)
+#     # index = VectorStoreIndex.from_documents(
+#     #     documents, storage_context=storage_context
+#     # )
 
-    return {}
+#     return {}
