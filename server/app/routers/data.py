@@ -4,6 +4,7 @@ import pymongo
 from typing import List
 from unstructured.partition.pdf import partition_pdf
 from pathlib import Path
+import os
 
 router = APIRouter()
 router = APIRouter(prefix="/data", tags=["data"])
@@ -14,7 +15,7 @@ def completion_to_prompt(completion: str) -> str:
     return f"<s>[INST] {completion} [/INST] </s>\n"
 
 
-TOGETHER_API_KEY = "63ab6eb41c340f7eafb146396ccc7bc9051daa395feef9a414204f322af63fcf"
+TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
 together.api_key = TOGETHER_API_KEY
 
 
