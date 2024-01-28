@@ -17,14 +17,18 @@ const App = () => {
         "Content-Type": "multipart/form-data",
       },
     });
+
+    await updateFiles();
+  };
+
+  const updateFiles = async () => {
+    const { data } = await axios.get("/api/upload");
+    setFilenames(data.files);
   };
 
   const [filenames, setFilenames] = useState(null);
   useEffect(() => {
-    (async () => {
-      const { data: filenames } = await axios.get("/api/upload");
-      setFilenames(filenames);
-    })().catch(console.error);
+    updateFiles().catch(console.error);
   }, []);
 
   return (
@@ -66,7 +70,7 @@ const App = () => {
         <div className="mt-8">
           <h3 className="font-medium text-slate-500">All Resumes</h3>
           <motion.div
-            className="grid grid-cols-3 gap-4 mt-2"
+            className="flex flex-wrap gap-4 mt-2"
             variants={{
               show: {
                 transition: {
