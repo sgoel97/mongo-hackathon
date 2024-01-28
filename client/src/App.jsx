@@ -3,9 +3,24 @@ import recruiterURL from "./assets/recruiter.jpg";
 import ChatBox from "./ChatBox";
 import ResumeBox from "./ResumeBox";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 function App() {
   const resumeUploadRef = useRef();
+
+  const uploadResume = async () => {
+    var formData = new FormData();
+
+    formData.append("file", resumeUploadRef.current.files[0]);
+
+    console.log(resumeUploadRef.current.files[0]);
+
+    await axios.post("/api/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  };
 
   return (
     <>
@@ -29,7 +44,13 @@ function App() {
           </h2>
         </div>
         <div className="mt-8">
-          <input ref={resumeUploadRef} multiple={false} type="file" hidden />
+          <input
+            ref={resumeUploadRef}
+            multiple={false}
+            type="file"
+            hidden
+            onChange={uploadResume}
+          />
           <button
             className="py-2 px-4 text-sm font-medium text-white bg-slate-800 shadow-xl active:scale-95 transition"
             onClick={() => resumeUploadRef.current?.click()}

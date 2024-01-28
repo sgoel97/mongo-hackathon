@@ -13,6 +13,8 @@ from llama_index import SimpleDirectoryReader, ServiceContext, VectorStoreIndex
 from llama_index.embeddings import TogetherEmbedding
 from llama_index.llms import TogetherLLM
 import json
+from .data import query_resume_data
+import together
 
 # Provide a template following the LLM's original chat template.
 
@@ -49,26 +51,40 @@ def run_rag_completion(
     # documents = SimpleDirectoryReader(document_dir).load_data()
     # index = VectorStoreIndex.from_documents(documents, service_context=service_context)
     # response = index.as_query_engine(similarity_top_k=5).query(query_text)
-    response = "test"  # str(response)
 
-    with open("./app/db/message_history.json", "r") as f:
+    vector_responses = query_resume_data(query_text)["response"]
+    augmented_query = "Context </s>"
+    for data in vector_responses:
+        augmented_query += data
+        augmented_query += "</s>"
+    augmented_query +=  "Answer the following query. Do not mention that you used the context provided previously." + "</s>" + query_text
+
+    response_chocies = together.Complete.create(
+        prompt=augmented_query,
+        model=generative_model,
+        max_tokens = 512,
+        temperature = 0.8,
+        top_k = 60,
+        top_p = 0.6,
+        repetition_penalty = 1.1,
+    )
+
+    response = response_chocies["output"]["choices"][0]["text"]  # str(response)
+
+    with open("./app/db/messages/message_history.json", "r") as f:
         curr_messages = json.load(f)
 
     curr_messages["messages"].append({"role": "user", "message": query_text})
     curr_messages["messages"].append({"role": "assistant", "message": response})
 
-    with open("./app/db/message_history.json", "w") as f:
+    with open("./app/db/messages/message_history.json", "w") as f:
         json.dump(curr_messages, f)
 
     return response
 
 
 # @router.post("/rag")
-# def generate_rag_response(message: str):
-#     vector_store = vector_store["vector_store"]
-#     storage_context = StorageContext.from_defaults(vector_store=vector_store)
-#     # index = VectorStoreIndex.from_documents(
-#     #     documents, storage_context=storage_context
-#     # )
+def generate_rag_response(message: str):
+    
 
-#     return {}
+    return {}

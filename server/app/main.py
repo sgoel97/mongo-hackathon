@@ -2,12 +2,13 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import json
 import os
+from pathlib import Path
 
-from .routers import data, chat
+from .routers import upload, data, chat
 
 app = FastAPI()
 
-origins = ["*"]
+origins = ["http://localhost:5173", "*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,8 +18,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 app.include_router(data.router)
 app.include_router(chat.router)
+app.include_router(upload.router)
+
 os.environ[
     "TOGETHER_API_KEY"
 ] = "63ab6eb41c340f7eafb146396ccc7bc9051daa395feef9a414204f322af63fcf"
@@ -26,7 +30,8 @@ os.environ[
 
 @app.on_event("startup")
 def on_startup():
-    with open("./app/db/message_history.json", "w") as f:
+    Path("./app/db/messages").mkdir(parents=True, exist_ok=True)
+    with open("./app/db/messages/message_history.json", "w") as f:
         json.dump(
             {
                 "messages": [
@@ -39,9 +44,7 @@ def on_startup():
 
 @app.on_event("shutdown")
 def on_shutdown():
-    import os
-
-    os.remove("./app/db/message_history.json")
+    os.remove("./app/db/messages/message_history.json")
 
 
 @app.get("/")
