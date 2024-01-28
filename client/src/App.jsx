@@ -46,9 +46,11 @@ const App = () => {
       }
     );
 
+    const chatResponse = response.data; //.response
+
     setMessages((messages) => [
       ...messages.slice(-1),
-      { ...messages[messages.length - 1], bot: response.data },
+      { ...messages[messages.length - 1], bot: chatResponse },
     ]);
   };
 
