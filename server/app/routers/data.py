@@ -48,7 +48,7 @@ def get_resume_names(data_folder: str, debug_mode: bool = False):
      -  a List[str] of resume names
     """
     resume_names = []
-    for item in data_folder.glob("**/*"):
+    for item in Path(data_folder).glob("**/*"):
         if item.is_file():
             resume_names.append(str(item))
 
@@ -124,6 +124,7 @@ def get_resume_to_text(
 async def try_query_resume_data(query: str):
     return query_resume_data(query)
 
+
 def query_resume_data(query: str):
     embedding_model_string = (
         "togethercomputer/m2-bert-80M-8k-retrieval"  # model API string from Together.
@@ -187,9 +188,7 @@ async def try_add_resume_data(text: str):
     return {"response": "response"}
 
 
-
 def add_batch_resumes(resumes: List[dict]):
-
     embedding_model_string = (
         "togethercomputer/m2-bert-80M-8k-retrieval"  # model API string from Together.
     )
