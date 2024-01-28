@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from fastapi import FastAPI, File, UploadFile
 import shutil
 from pathlib import Path
-from data import get_resume_to_text
+from .data import get_resume_to_text
 
 router = APIRouter(prefix="/upload", tags=["upload"])
 

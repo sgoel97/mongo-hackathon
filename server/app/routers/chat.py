@@ -15,6 +15,7 @@ from llama_index.llms import TogetherLLM
 import json
 from .data import query_resume_data
 import together
+from pathlib import Path
 
 # Provide a template following the LLM's original chat template.
 
@@ -57,16 +58,20 @@ def run_rag_completion(
     for data in vector_responses:
         augmented_query += data
         augmented_query += "</s>"
-    augmented_query +=  "Answer the following query. Do not mention that you used the context provided previously." + "</s>" + query_text
+    augmented_query += (
+        "Answer the following query. Do not mention that you used the context provided previously."
+        + "</s>"
+        + query_text
+    )
     print(augmented_query)
     response_chocies = together.Complete.create(
         prompt=augmented_query,
         model=generative_model,
-        max_tokens = 512,
-        temperature = 0.8,
-        top_k = 60,
-        top_p = 0.6,
-        repetition_penalty = 1.1,
+        max_tokens=512,
+        temperature=0.6,
+        top_k=60,
+        top_p=0.6,
+        repetition_penalty=1.1,
     )
 
     response = response_chocies["output"]["choices"][0]["text"]  # str(response)
@@ -83,8 +88,34 @@ def run_rag_completion(
     return response
 
 
-# @router.post("/rag")
-def generate_rag_response(message: str):
-    
+@router.get("/demo")
+def get_demo(
+    query_text,
+    generative_model: str = "mistralai/Mixtral-8x7B-Instruct-v0.1",
+):
+    path = Path("./app/db/files")
+    path.mkdir(parents=True, exist_ok=True)
+    file_names = list(path.glob("*.pdf"))
+    file_names = [x.name for x in file_names]
+    file_names = " ".join(file_names)
 
-    return {}
+    query_text = f"""
+    here are some resume filenames:
+
+    {file_names}
+
+    please answer my question:
+
+    {query_text}
+    """
+    response_chocies = together.Complete.create(
+        prompt=query_text,
+        model=generative_model,
+        max_tokens=512,
+        temperature=0.6,
+        top_k=60,
+        top_p=0.6,
+        repetition_penalty=1.1,
+    )
+    response = response_chocies["output"]["choices"][0]["text"]  # str(response)
+    return str(response)

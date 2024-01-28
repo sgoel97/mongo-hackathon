@@ -23,10 +23,6 @@ app.include_router(data.router)
 app.include_router(chat.router)
 app.include_router(upload.router)
 
-os.environ[
-    "TOGETHER_API_KEY"
-] = "63ab6eb41c340f7eafb146396ccc7bc9051daa395feef9a414204f322af63fcf"
-
 
 @app.on_event("startup")
 def on_startup():
