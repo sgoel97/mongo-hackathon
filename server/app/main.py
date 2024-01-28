@@ -19,12 +19,10 @@ app.add_middleware(
 app.include_router(data.router)
 app.include_router(chat.router)
 
-load_dotenv()
-
 
 @app.on_event("startup")
 def on_startup():
-    with open("./message_history.json", "w") as f:
+    with open("./app/db/message_history.json", "w") as f:
         json.dump(
             {
                 "messages": [
@@ -37,4 +35,11 @@ def on_startup():
 
 @app.on_event("shutdown")
 def on_shutdown():
-    pass
+    import os
+
+    os.remove("./app/db/message_history.json")
+
+
+@app.get("/")
+def root():
+    return {"message": "Hello World"}
