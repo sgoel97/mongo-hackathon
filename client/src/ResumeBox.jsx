@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const ResumeBox = ({ filename }) => (
   <motion.div
-    initial={{ opacity: 0.1, y: 50 }}
+    initial={{ opacity: 0.1, y: 20 }}
     variants={{ show: { opacity: 1, y: 0 } }}
     className="shadow-lg bg-slate-200 px-3 py-2"
   >

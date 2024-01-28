@@ -23,6 +23,10 @@ app.include_router(data.router)
 app.include_router(chat.router)
 app.include_router(upload.router)
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 1962557977b056e40b734cf1630d36505516c057
 @app.on_event("startup")
 def on_startup():
     Path("./app/db/messages").mkdir(parents=True, exist_ok=True)
