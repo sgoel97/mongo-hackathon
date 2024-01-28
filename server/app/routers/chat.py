@@ -58,7 +58,7 @@ def run_rag_completion(
         augmented_query += data
         augmented_query += "</s>"
     augmented_query +=  "Answer the following query. Do not mention that you used the context provided previously." + "</s>" + query_text
-    print(augmented_query)
+
     response_chocies = together.Complete.create(
         prompt=augmented_query,
         model=generative_model,
