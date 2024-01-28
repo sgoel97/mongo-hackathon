@@ -163,6 +163,7 @@ def query_resume_data(query: str):
 
 @router.post("/resume_add")
 async def try_add_resume_data(text: str):
+    return {"response" : "THIS API IS DEPRECATED GO UPLOAD YOU TEXT YOURSELF"}
     embedding_model_string = (
         "togethercomputer/m2-bert-80M-8k-retrieval"  # model API string from Together.
     )
@@ -191,6 +192,7 @@ async def try_add_resume_data(text: str):
 
 
 def add_batch_resumes(resumes: List[dict]):
+    print("adding batch resumes")
     embedding_model_string = (
         "togethercomputer/m2-bert-80M-8k-retrieval"  # model API string from Together.
     )
@@ -202,8 +204,9 @@ def add_batch_resumes(resumes: List[dict]):
     )
 
     for resume in resumes:
+        full_text = " ".join(resume["context"])
         vector_embeddings = generate_embeddings(
-            " ".join(resume["context"]), embedding_model_string
+            [full_text], embedding_model_string
         )
         print(vector_embeddings)
         mongo_uri = "mongodb+srv://timg51237:01Y4sSZbZxsNFydW@cluster0.qbsk5ke.mongodb.net/?retryWrites=true&w=majority"
@@ -216,6 +219,7 @@ def add_batch_resumes(resumes: List[dict]):
                 {
                     vector_database_field_name: vector_embedding,
                     "file_name": resume["file_name"],
+                    "text": full_text
                 }
             )
 
