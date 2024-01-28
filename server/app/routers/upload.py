@@ -2,7 +2,11 @@ from fastapi import APIRouter
 from fastapi import FastAPI, File, UploadFile
 import shutil
 from pathlib import Path
+<<<<<<< HEAD
 from .data import get_resume_to_text
+=======
+from .data import get_resume_to_text, add_batch_resumes
+>>>>>>> 1962557977b056e40b734cf1630d36505516c057
 
 router = APIRouter(prefix="/upload", tags=["upload"])
 
@@ -15,7 +19,7 @@ async def upload_file(file: UploadFile):
 
     # [{filename: 'test.pdf', contents: []}, {filename: 'test2.pdf', contents: []}]
     file_texts = get_resume_to_text("./app/db/files", content_type="text")
-
+    add_batch_resumes(file_texts)
     return {"filename": file.filename}
 
 
