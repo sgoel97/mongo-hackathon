@@ -71,13 +71,13 @@ def run_rag_completion(
 
     response = response_chocies["output"]["choices"][0]["text"]  # str(response)
 
-    with open("./app/db/message_history.json", "r") as f:
+    with open("./app/db/messages/message_history.json", "r") as f:
         curr_messages = json.load(f)
 
     curr_messages["messages"].append({"role": "user", "message": query_text})
     curr_messages["messages"].append({"role": "assistant", "message": response})
 
-    with open("./app/db/message_history.json", "w") as f:
+    with open("./app/db/messages/message_history.json", "w") as f:
         json.dump(curr_messages, f)
 
     return response
