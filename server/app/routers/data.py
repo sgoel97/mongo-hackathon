@@ -154,7 +154,9 @@ def query_resume_data(query: str):
         ]
     )
     print(results)
-    results_as_dict = {doc["text"] for doc in results}
+    results_as_dict = [
+        {"text": doc["text"], "file_name": doc["file_name"]} for doc in results
+    ]
     print(results_as_dict)
     return {"response": results_as_dict}
 
@@ -189,7 +191,6 @@ async def try_add_resume_data(text: str):
 
 
 def add_batch_resumes(resumes: List[dict]):
-    print(resumes)
     embedding_model_string = (
         "togethercomputer/m2-bert-80M-8k-retrieval"  # model API string from Together.
     )
