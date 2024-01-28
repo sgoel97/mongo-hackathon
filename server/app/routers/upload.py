@@ -19,4 +19,5 @@ async def get_files():
     path = Path("./app/db/files")
     path.mkdir(parents=True, exist_ok=True)
     file_names = list(path.glob("*.pdf"))
+    file_names = [x.name for x in file_names]
     return {"files": file_names}
