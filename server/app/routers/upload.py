@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from fastapi import FastAPI, File, UploadFile
 import shutil
 from pathlib import Path
+from data import get_resume_to_text
 
 router = APIRouter(prefix="/upload", tags=["upload"])
 
@@ -11,6 +12,10 @@ async def upload_file(file: UploadFile):
     Path("./app/db/files").mkdir(parents=True, exist_ok=True)
     with open(f"./app/db/files/{file.filename}", "wb") as f:
         shutil.copyfileobj(file.file, f)
+
+    # [{filename: 'test.pdf', contents: []}]
+    file_texts = get_resume_to_text("./app/db/files", content_type="text")
+
     return {"filename": file.filename}
 
 
