@@ -154,7 +154,7 @@ def query_resume_data(query: str):
         ]
     )
     print(results)
-    results_as_dict = {doc["text"] for doc in results}
+    results_as_dict = [{"text": doc["text"], "file_name": doc["file_name"]} for doc in results]
     print(results_as_dict)
     return {"response": results_as_dict}
 
@@ -189,7 +189,6 @@ async def try_add_resume_data(text: str):
 
 
 def add_batch_resumes(resumes: List[dict]):
-    print(resumes)
     embedding_model_string = (
         "togethercomputer/m2-bert-80M-8k-retrieval"  # model API string from Together.
     )
@@ -201,8 +200,8 @@ def add_batch_resumes(resumes: List[dict]):
     )
 
     for resume in resumes:
-        vector_embeddings = generate_embeddings(" ".join(resume["context"]), embedding_model_string)
-        print(vector_embeddings)
+        full_text = " ".join(resume["context"])
+        vector_embeddings = generate_embeddings(full_text, embedding_model_string)
         mongo_uri = "mongodb+srv://timg51237:01Y4sSZbZxsNFydW@cluster0.qbsk5ke.mongodb.net/?retryWrites=true&w=majority"
         mongodb_client = pymongo.MongoClient(mongo_uri)
         mongodb_db = mongodb_client["beta"]
@@ -210,7 +209,7 @@ def add_batch_resumes(resumes: List[dict]):
 
         for vector_embedding in vector_embeddings:
             mongodb_resumes.insert_one(
-                {vector_database_field_name: vector_embedding, "file_name": resume["file_name"]}
+                {vector_database_field_name: vector_embedding, "file_name": resume["file_name"], "text": full_text}
             )
 
     return {"response": "response"}

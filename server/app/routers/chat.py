@@ -33,29 +33,12 @@ def run_rag_completion(
     query_text: str,
     embedding_model: str = "togethercomputer/m2-bert-80M-8k-retrieval",
     generative_model: str = "mistralai/Mixtral-8x7B-Instruct-v0.1",
-) -> str:
-    # service_context = ServiceContext.from_defaults(
-    #     llm=TogetherLLM(
-    #         generative_model,
-    #         temperature=0.6,
-    #         max_tokens=1024,
-    #         top_p=0.7,
-    #         top_k=50,
-    #         # stop=...,
-    #         # repetition_penalty=...,
-    #         is_chat_model=True,
-    #         completion_to_prompt=completion_to_prompt,
-    #     ),
-    #     embed_model=TogetherEmbedding(embedding_model),
-    # )
-    # documents = SimpleDirectoryReader(document_dir).load_data()
-    # index = VectorStoreIndex.from_documents(documents, service_context=service_context)
-    # response = index.as_query_engine(similarity_top_k=5).query(query_text)
+):
 
     vector_responses = query_resume_data(query_text)["response"]
     augmented_query = "Context </s>"
     for data in vector_responses:
-        augmented_query += data
+        augmented_query += data["text"]
         augmented_query += "</s>"
     augmented_query +=  "Answer the following query. Do not mention that you used the context provided previously." + "</s>" + query_text
     print(augmented_query)
@@ -80,7 +63,7 @@ def run_rag_completion(
     with open("./app/db/messages/message_history.json", "w") as f:
         json.dump(curr_messages, f)
 
-    return response
+    return {"response": response, "files": [x["file_name"] for x in vector_responses]}
 
 
 # @router.post("/rag")
