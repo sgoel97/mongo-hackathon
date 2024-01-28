@@ -44,7 +44,7 @@ def get_resume_names(data_folder: str, debug_mode: bool = False):
         data_folder: string path of the datafolder
         debug_mode: extra config for some print statements
     Returns:
-     -  a list of List[str] of resume names
+     -  a List[str] of resume names
     """
     resume_names = []
     for item in data_folder.glob("**/*"):
@@ -89,7 +89,13 @@ def get_resume_content(resume_names, content_type: str = "unstructured"):
             else:
                 raise AttributeError("Wrong input")
 
-        total_file_contents.append(curr_out)
+        total_file_contents.append(
+            {
+                "file_name": resume_name,
+                "context": curr_out,
+            }
+        )
+    return total_file_contents
 
 
 def get_resume_to_text(
@@ -105,8 +111,9 @@ def get_resume_to_text(
       Defaults to False. When enabled, may provide additional debugging information.
 
     Returns:
-    - list of list: A nested list where each sublist contains the contents of a
-      single resume in an unstructured format.
+    - dictionary of objects. Each object follows [{file_name: 'test.pdf', 'context:[*object1*, *obj2*, *obj3*]]
+        list of list: A nested list where each sublist contains the contents of a
+        single resume in an unstructured format.
     """
     resume_names = get_resume_names(data_folder, debug_mode)
     return get_resume_content(resume_names, content_type)
