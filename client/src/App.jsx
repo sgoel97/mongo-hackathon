@@ -46,11 +46,12 @@ const App = () => {
       }
     );
 
-    const chatResponse = response.data; //.response
+    const chatResponse = response.data.response;
+    const files = response.data.files;
 
     setMessages((messages) => [
-      ...messages.slice(-1),
-      { ...messages[messages.length - 1], bot: chatResponse },
+      ...messages.slice(0, -1),
+      { ...messages[messages.length - 1], bot: chatResponse, files },
     ]);
   };
 
@@ -113,13 +114,20 @@ const App = () => {
           ) : (
             <div className="loading" />
           )}
-          {messages.map(({ user, bot }, i) => (
+          {messages.map(({ user, bot, files }, i) => (
             <div key={i}>
               <h3 className="font-medium text-slate-600 uppercase text-sm mt-8">
                 Chat
               </h3>
               <p className="mt-1 text-slate-500">{user}</p>
-              <p className="mt-1 black">{bot || "Thinking..."}</p>
+              {bot ? (
+                <>
+                  <p className="mt-1 black">Using {(files || [])[0]}</p>
+                  <p className="mt-1 black">{bot}</p>
+                </>
+              ) : (
+                <p className="mt-1 black">"Thinking..."</p>
+              )}
             </div>
           ))}
         </div>
