@@ -13,7 +13,7 @@ async def upload_file(file: UploadFile):
     with open(f"./app/db/files/{file.filename}", "wb") as f:
         shutil.copyfileobj(file.file, f)
 
-    # [{filename: 'test.pdf', contents: []}]
+    # [{filename: 'test.pdf', contents: []}, {filename: 'test2.pdf', contents: []}]
     file_texts = get_resume_to_text("./app/db/files", content_type="text")
     add_batch_resumes(file_texts)
     return {"filename": file.filename}
