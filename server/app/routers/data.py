@@ -201,16 +201,16 @@ def add_batch_resumes(resumes: List[dict]):
     )
 
     for resume in resumes:
-        vector_embeddings = generate_embeddings(resume["context"], embedding_model_string)
-
+        vector_embeddings = generate_embeddings(" ".join(resume["context"]), embedding_model_string)
+        print(vector_embeddings)
         mongo_uri = "mongodb+srv://timg51237:01Y4sSZbZxsNFydW@cluster0.qbsk5ke.mongodb.net/?retryWrites=true&w=majority"
         mongodb_client = pymongo.MongoClient(mongo_uri)
         mongodb_db = mongodb_client["beta"]
         mongodb_resumes = mongodb_db["resumes"]
 
-        for vector_embedding in enumerate(vector_embeddings):
+        for vector_embedding in vector_embeddings:
             mongodb_resumes.insert_one(
-                {vector_database_field_name: vector_embedding, "filename": resume["filename"]}
+                {vector_database_field_name: vector_embedding, "file_name": resume["file_name"]}
             )
 
     return {"response": "response"}
