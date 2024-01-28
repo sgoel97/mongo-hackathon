@@ -1,12 +1,9 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Security
 from llama_index import VectorStoreIndex
-from ..dependencies import get_vector_database
 from llama_index.storage.storage_context import StorageContext
-from ..utils import VerifyToken
 
 router = APIRouter(prefix="/chat", tags=["chat"])
-
 
 @router.post("/message")
 async def on_message(message: str):
@@ -19,10 +16,12 @@ async def on_message(message: str):
 
 @router.post("/rag")
 def generate_rag_response(
-    message: str, vector_store: Annotated[dict, Depends(get_vector_database)]
+    message: str
 ):
     vector_store = vector_store["vector_store"]
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     # index = VectorStoreIndex.from_documents(
     #     documents, storage_context=storage_context
     # )
+
+    return {}

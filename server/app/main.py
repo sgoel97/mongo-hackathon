@@ -1,6 +1,5 @@
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
 
 from .routers import data, chat
 
@@ -18,5 +17,3 @@ app.add_middleware(
 
 app.include_router(data.router)
 app.include_router(chat.router)
-
-load_dotenv()
