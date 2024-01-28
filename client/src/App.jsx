@@ -13,11 +13,11 @@ function App() {
         <div className="flex items-center gap-4">
           <img
             src={recruiterURL}
-            className="w-10 h-10 object-cover rounded-full"
+            className="w-9 h-9 object-cover rounded-full"
           />
           <div className="leading-tight text-sm">
             <div className="font-medium">Timothy Guo</div>
-            <div className="text-slate-800">Tech Recruiter</div>
+            <div className="text-slate-700">Tech Recruiter</div>
           </div>
         </div>
       </header>
