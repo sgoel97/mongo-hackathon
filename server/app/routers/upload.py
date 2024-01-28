@@ -12,3 +12,10 @@ async def upload_file(file: UploadFile):
     with open(f"./app/db/files/{file.filename}", "wb") as f:
         shutil.copyfileobj(file.file, f)
     return {"filename": file.filename}
+
+
+@router.get("/")
+async def get_files():
+    path = Path("./app/db/files").mkdir(parents=True, exist_ok=True)
+    file_names = list(path.glob("*.pdf"))
+    return {"files": file_names}
