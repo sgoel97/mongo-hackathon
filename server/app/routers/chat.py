@@ -26,27 +26,28 @@ def completion_to_prompt(completion: str) -> str:
 
 @router.post("/")
 def run_rag_completion(
+    index,
     document_dir: str,
     query_text: str,
     embedding_model: str = "togethercomputer/m2-bert-80M-8k-retrieval",
     generative_model: str = "mistralai/Mixtral-8x7B-Instruct-v0.1",
 ) -> str:
-    service_context = ServiceContext.from_defaults(
-        llm=TogetherLLM(
-            generative_model,
-            temperature=0.6,
-            max_tokens=1024,
-            top_p=0.7,
-            top_k=50,
-            # stop=...,
-            # repetition_penalty=...,
-            is_chat_model=True,
-            completion_to_prompt=completion_to_prompt,
-        ),
-        embed_model=TogetherEmbedding(embedding_model),
-    )
-    documents = SimpleDirectoryReader(document_dir).load_data()
-    index = VectorStoreIndex.from_documents(documents, service_context=service_context)
+    # service_context = ServiceContext.from_defaults(
+    #     llm=TogetherLLM(
+    #         generative_model,
+    #         temperature=0.6,
+    #         max_tokens=1024,
+    #         top_p=0.7,
+    #         top_k=50,
+    #         # stop=...,
+    #         # repetition_penalty=...,
+    #         is_chat_model=True,
+    #         completion_to_prompt=completion_to_prompt,
+    #     ),
+    #     embed_model=TogetherEmbedding(embedding_model),
+    # )
+    # documents = SimpleDirectoryReader(document_dir).load_data()
+    # index = VectorStoreIndex.from_documents(documents, service_context=service_context)
     response = index.as_query_engine(similarity_top_k=5).query(query_text)
 
     return str(response)
