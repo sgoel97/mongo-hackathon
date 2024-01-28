@@ -34,7 +34,9 @@ def generate_embeddings(input_texts: List[str], model_api_string: str) -> List[L
 
 @router.post("/query")
 async def try_query_resume_data(query: str):
+    return query_resume_data(query)
 
+def query_resume_data(query: str):
     embedding_model_string = 'togethercomputer/m2-bert-80M-8k-retrieval' # model API string from Together.
     vector_database_field_name = 'embedding_together_m2-bert-8k-retrieval' # define your embedding field name.
     vector_embedding = generate_embeddings([query], embedding_model_string)[0]
