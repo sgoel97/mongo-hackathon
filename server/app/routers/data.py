@@ -15,7 +15,7 @@ def completion_to_prompt(completion: str) -> str:
     return f"<s>[INST] {completion} [/INST] </s>\n"
 
 
-TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
+TOGETHER_API_KEY = "63ab6eb41c340f7eafb146396ccc7bc9051daa395feef9a414204f322af63fcf"
 together.api_key = TOGETHER_API_KEY
 
 
@@ -201,7 +201,9 @@ def add_batch_resumes(resumes: List[dict]):
     )
 
     for resume in resumes:
-        vector_embeddings = generate_embeddings(" ".join(resume["context"]), embedding_model_string)
+        vector_embeddings = generate_embeddings(
+            " ".join(resume["context"]), embedding_model_string
+        )
         print(vector_embeddings)
         mongo_uri = "mongodb+srv://timg51237:01Y4sSZbZxsNFydW@cluster0.qbsk5ke.mongodb.net/?retryWrites=true&w=majority"
         mongodb_client = pymongo.MongoClient(mongo_uri)
@@ -210,7 +212,10 @@ def add_batch_resumes(resumes: List[dict]):
 
         for vector_embedding in vector_embeddings:
             mongodb_resumes.insert_one(
-                {vector_database_field_name: vector_embedding, "file_name": resume["file_name"]}
+                {
+                    vector_database_field_name: vector_embedding,
+                    "file_name": resume["file_name"],
+                }
             )
 
     return {"response": "response"}

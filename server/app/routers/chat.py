@@ -54,7 +54,7 @@ def run_rag_completion(
     # response = index.as_query_engine(similarity_top_k=5).query(query_text)
 
     vector_responses = query_resume_data(query_text)["response"]
-    augmented_query = "Context </s>"
+    augmented_query = "Here is some context from resumes that we are looking at:</s>"
     for data in vector_responses:
         augmented_query += data
         augmented_query += "</s>"
@@ -118,4 +118,4 @@ def get_demo(
         repetition_penalty=1.1,
     )
     response = response_chocies["output"]["choices"][0]["text"]  # str(response)
-    return str(response)
+    return {"response": response}
